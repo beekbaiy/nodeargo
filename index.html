@@ -3,964 +3,899 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeFlow | Visual Development Platform</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <title>Neon SpeedTest | NextGen Network Diagnostics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: {
+                            cyan: '#00f3ff',
+                            purple: '#b500ff',
+                            pink: '#ff0055',
+                            dark: '#0a0b10',
+                            panel: '#12141d'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'neon-cyan': '0 0 10px rgba(0, 243, 255, 0.5), 0 0 20px rgba(0, 243, 255, 0.3)',
+                        'neon-purple': '0 0 10px rgba(181, 0, 255, 0.5), 0 0 20px rgba(181, 0, 255, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
-            font-family: 'Roboto', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f9fbfd;
-        }
-        
-        h1, h2, h3, h4 {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            line-height: 1.3;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* Header & Navigation */
-        header {
-            background-color: #fff;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
-            position: fixed;
-            width: 100%;
-            z-index: 1000;
-        }
-        
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-        }
-        
-        .logo-icon {
-            color: #4361ee;
-            font-size: 28px;
-            margin-right: 10px;
-        }
-        
-        .logo-text {
-            font-family: 'Poppins', sans-serif;
-            font-size: 24px;
-            font-weight: 700;
-            color: #333;
-        }
-        
-        .logo-text span {
-            color: #4361ee;
-        }
-        
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-        
-        .nav-links li {
-            margin-left: 30px;
-        }
-        
-        .nav-links a {
-            text-decoration: none;
-            color: #555;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        
-        .nav-links a:hover {
-            color: #4361ee;
-        }
-        
-        .cta-button {
-            background-color: #4361ee;
+            background-color: #050508;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 243, 255, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(181, 0, 255, 0.04) 0%, transparent 50%),
+                linear-gradient(to bottom, transparent, rgba(0,0,0,0.8));
             color: white;
-            border: none;
-            padding: 12px 28px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        .text-glow-cyan {
+            text-shadow: 0 0 8px rgba(0, 243, 255, 0.8), 0 0 20px rgba(0, 243, 255, 0.4);
+        }
+        .text-glow-purple {
+            text-shadow: 0 0 8px rgba(181, 0, 255, 0.8), 0 0 20px rgba(181, 0, 255, 0.4);
+        }
+
+        /* Speedometer SVG Styles */
+        .meter-track {
+            stroke: rgba(255, 255, 255, 0.05);
+            stroke-width: 14;
+            fill: none;
         }
         
-        .cta-button:hover {
-            background-color: #3a56d4;
-            transform: translateY(-2px);
+        .meter-fill-dl {
+            stroke: #00f3ff;
+            stroke-width: 14;
+            fill: none;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 8px #00f3ff) drop-shadow(0 0 20px rgba(0,243,255,0.6));
+            transition: stroke-dashoffset 0.1s linear, stroke 0.3s ease;
         }
-        
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: #333;
-            cursor: pointer;
+
+        .meter-fill-ul {
+            stroke: #b500ff;
+            stroke-width: 14;
+            fill: none;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 8px #b500ff) drop-shadow(0 0 20px rgba(181,0,255,0.6));
+            transition: stroke-dashoffset 0.1s linear, stroke 0.3s ease;
         }
-        
-        /* Hero Section */
-        .hero {
-            padding: 150px 0 100px;
-            background: linear-gradient(135deg, #f0f4ff 0%, #f9fbfd 100%);
+
+        .meter-tick {
+            stroke: rgba(255, 255, 255, 0.3);
+            stroke-width: 2;
         }
-        
-        .hero-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+
+        .meter-tick-major {
+            stroke: rgba(255, 255, 255, 0.7);
+            stroke-width: 3;
         }
-        
-        .hero-text {
-            flex: 1;
-            padding-right: 40px;
-        }
-        
-        .hero-text h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            color: #222;
-        }
-        
-        .hero-text h1 span {
-            color: #4361ee;
-        }
-        
-        .hero-text p {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 30px;
-            max-width: 600px;
-        }
-        
-        .hero-buttons {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .secondary-button {
-            background-color: white;
-            color: #4361ee;
-            border: 2px solid #4361ee;
-            padding: 12px 28px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .secondary-button:hover {
-            background-color: #f0f4ff;
-        }
-        
-        .hero-image {
-            flex: 1;
-            text-align: center;
-        }
-        
-        .hero-image img {
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 20px 40px rgba(67, 97, 238, 0.15);
-        }
-        
-        /* Features Section */
-        .section-title {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        
-        .section-title h2 {
-            font-size: 36px;
-            color: #222;
-            margin-bottom: 15px;
-        }
-        
-        .section-title p {
-            color: #666;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        
-        .features {
-            padding: 100px 0;
-            background-color: white;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-        }
-        
-        .feature-card {
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .feature-icon {
-            background-color: #eef2ff;
-            color: #4361ee;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            font-size: 28px;
-        }
-        
-        .feature-card h3 {
-            font-size: 22px;
-            margin-bottom: 15px;
-        }
-        
-        .feature-card p {
-            color: #666;
-        }
-        
-        /* Benefits Section */
-        .benefits {
-            padding: 100px 0;
-            background-color: #f0f4ff;
-        }
-        
-        .benefits-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-        
-        .benefit-item {
-            text-align: center;
-            padding: 30px 20px;
-        }
-        
-        .benefit-icon {
-            color: #4361ee;
-            font-size: 40px;
-            margin-bottom: 20px;
-        }
-        
-        .benefit-item h3 {
-            font-size: 22px;
-            margin-bottom: 15px;
-        }
-        
-        .benefit-item p {
-            color: #666;
-        }
-        
-        /* Testimonials */
-        .testimonials {
-            padding: 100px 0;
-            background-color: white;
-        }
-        
-        .testimonial-slider {
-            max-width: 800px;
-            margin: 0 auto;
-            position: relative;
-        }
-        
-        .testimonial {
-            background: #f9fbfd;
-            padding: 40px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        }
-        
-        .testimonial-text {
-            font-size: 18px;
-            font-style: italic;
-            margin-bottom: 30px;
-            color: #555;
-        }
-        
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .author-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #ddd;
-            margin-right: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #4361ee;
-            font-size: 24px;
-        }
-        
-        .author-info h4 {
-            font-size: 18px;
-            margin-bottom: 5px;
-        }
-        
-        .author-info p {
-            color: #777;
-            font-size: 14px;
-        }
-        
-        /* Pricing Section */
-        .pricing {
-            padding: 100px 0;
-            background-color: #f9fbfd;
-        }
-        
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-        }
-        
-        .pricing-card {
-            background: white;
-            border-radius: 10px;
-            padding: 40px 30px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            transition: transform 0.3s;
-        }
-        
-        .pricing-card.featured {
-            border-top: 5px solid #4361ee;
-            transform: scale(1.05);
-            position: relative;
-        }
-        
-        .featured-badge {
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #4361ee;
-            color: white;
-            padding: 5px 20px;
-            border-radius: 20px;
+
+        .meter-label {
+            fill: rgba(255, 255, 255, 0.6);
+            font-family: 'Rajdhani', sans-serif;
             font-size: 14px;
             font-weight: 600;
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+
+        #needle-group {
+            transform-origin: 250px 250px;
+            /* -90deg is 0 on the dial, +90deg is Max */
+            transform: rotate(-90deg);
+            transition: transform 0.05s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .needle {
+            fill: #fff;
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.8));
+        }
+
+        .needle-center {
+            fill: #0a0b10;
+            stroke: #00f3ff;
+            stroke-width: 4;
+            filter: drop-shadow(0 0 8px rgba(0,243,255,0.8));
+            transition: stroke 0.3s ease;
+        }
+
+        /* Animations */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.02); }
         }
         
-        .pricing-card:hover {
-            transform: translateY(-10px);
+        .anim-pulse {
+            animation: pulse-glow 2s infinite;
         }
-        
-        .pricing-card.featured:hover {
-            transform: scale(1.05) translateY(-10px);
+
+        @keyframes scan-line {
+            0% { transform: translateY(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(100%); opacity: 0; }
         }
-        
-        .plan-name {
-            font-size: 24px;
-            margin-bottom: 15px;
-            color: #333;
+
+        .node-item {
+            transition: all 0.3s ease;
         }
-        
-        .plan-price {
-            font-size: 48px;
-            font-weight: 700;
-            color: #4361ee;
-            margin-bottom: 20px;
+        .node-item.testing {
+            border-color: #00f3ff;
+            background-color: rgba(0, 243, 255, 0.1);
+            box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.2);
         }
-        
-        .plan-price span {
-            font-size: 16px;
-            color: #777;
+        .node-item.selected {
+            border-color: #b500ff;
+            background-color: rgba(181, 0, 255, 0.1);
+            box-shadow: 0 0 15px rgba(181, 0, 255, 0.3);
         }
-        
-        .plan-features {
-            list-style: none;
-            margin-bottom: 30px;
+
+        /* Glassmorphism Panels */
+        .glass-panel {
+            background: rgba(18, 20, 29, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
-        .plan-features li {
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-            color: #555;
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
         }
-        
-        .plan-features li:last-child {
-            border-bottom: none;
+        ::-webkit-scrollbar-track {
+            background: transparent;
         }
-        
-        /* CTA Section */
-        .cta-section {
-            padding: 100px 0;
-            background: linear-gradient(135deg, #4361ee 0%, #3a56d4 100%);
-            text-align: center;
-            color: white;
-        }
-        
-        .cta-section h2 {
-            font-size: 36px;
-            margin-bottom: 20px;
-        }
-        
-        .cta-section p {
-            font-size: 18px;
-            max-width: 700px;
-            margin: 0 auto 30px;
-            opacity: 0.9;
-        }
-        
-        .cta-section .cta-button {
-            background-color: white;
-            color: #4361ee;
-            font-size: 16px;
-            padding: 15px 40px;
-        }
-        
-        .cta-section .cta-button:hover {
-            background-color: #f0f4ff;
-        }
-        
-        /* Footer */
-        footer {
-            background-color: #222;
-            color: #ccc;
-            padding: 70px 0 20px;
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            margin-bottom: 50px;
-        }
-        
-        .footer-column h3 {
-            font-size: 20px;
-            color: white;
-            margin-bottom: 25px;
-        }
-        
-        .footer-links {
-            list-style: none;
-        }
-        
-        .footer-links li {
-            margin-bottom: 12px;
-        }
-        
-        .footer-links a {
-            color: #aaa;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .footer-links a:hover {
-            color: #4361ee;
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid #444;
-            font-size: 14px;
-            color: #888;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            .hero-content {
-                flex-direction: column;
-            }
-            
-            .hero-text {
-                padding-right: 0;
-                margin-bottom: 50px;
-                text-align: center;
-            }
-            
-            .hero-text p {
-                margin: 0 auto 30px;
-            }
-            
-            .pricing-card.featured {
-                transform: none;
-            }
-            
-            .pricing-card.featured:hover {
-                transform: translateY(-10px);
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-            }
-            
-            .hero-text h1 {
-                font-size: 36px;
-            }
-            
-            .section-title h2 {
-                font-size: 30px;
-            }
-            
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .hero-buttons button {
-                width: 100%;
-                max-width: 300px;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .hero {
-                padding: 130px 0 80px;
-            }
-            
-            .features, .benefits, .testimonials, .pricing, .cta-section {
-                padding: 70px 0;
-            }
-            
-            .feature-card, .testimonial {
-                padding: 25px;
-            }
-            
-            .plan-price {
-                font-size: 36px;
-            }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
         }
     </style>
 </head>
-<body>
-    <!-- Header & Navigation -->
-    <header>
-        <div class="container">
-            <nav>
-                <div class="logo">
-                    <div class="logo-icon"><i class="fas fa-bezier-curve"></i></div>
-                    <div class="logo-text">Code<span>Flow</span></div>
-                </div>
-                
-                <ul class="nav-links">
-                    <li><a href="#features">Features</a></li>
-                    <li><a href="#benefits">Benefits</a></li>
-                    <li><a href="#testimonials">Testimonials</a></li>
-                    <li><a href="#pricing">Pricing</a></li>
-                    <li><a href="#">Resources</a></li>
-                </ul>
-                
-                <button class="cta-button">Start Free Trial</button>
-                <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
-            </nav>
+<body class="min-h-screen flex flex-col font-rajdhani selection:bg-neon-cyan selection:text-black">
+
+    <header class="w-full p-6 flex justify-between items-center z-10 relative">
+        <div class="flex items-center gap-3">
+            <svg class="w-8 h-8 text-neon-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            <h1 class="text-2xl font-orbitron font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-white">NEON<span class="text-white font-light">TEST</span></h1>
+        </div>
+        <div class="text-gray-400 text-sm font-semibold tracking-wider flex items-center gap-2">
+            <span class="relative flex h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-cyan opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-neon-cyan"></span>
+            </span>
+            SYSTEM ONLINE
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-text">
-                    <h1>Build Apps Faster With <span>Visual Development</span></h1>
-                    <p>CodeFlow empowers teams to create enterprise-grade applications with minimal coding. Drag, drop, and connect components to build powerful web and mobile apps in record time.</p>
-                    <div class="hero-buttons">
-                        <button class="cta-button">Start Building Free</button>
-                        <button class="secondary-button">Watch Demo</button>
-                    </div>
-                </div>
-                <div class="hero-image">
-                    <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="CodeFlow Platform Interface">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <div class="container">
-            <div class="section-title">
-                <h2>Powerful Features for Rapid Development</h2>
-                <p>CodeFlow provides all the tools you need to build, deploy, and scale applications without writing extensive code.</p>
+    <main class="flex-grow flex flex-col lg:flex-row items-center justify-center p-4 lg:p-8 gap-8 w-full max-w-7xl mx-auto z-10 relative">
+        
+        <!-- Left Column: Node Selection & Status (Hidden initially on mobile, moved down later) -->
+        <div id="node-panel" class="w-full lg:w-1/4 glass-panel rounded-2xl p-5 flex flex-col gap-4 h-auto lg:h-[500px] order-2 lg:order-1 transition-opacity duration-500">
+            <div class="border-b border-gray-800 pb-3 flex justify-between items-end">
+                <h2 class="font-orbitron text-gray-300 text-sm tracking-widest">ROUTING PROTOCOL</h2>
+                <span id="test-phase-label" class="text-neon-cyan text-xs font-bold animate-pulse">STANDBY</span>
             </div>
             
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-th-large"></i>
-                    </div>
-                    <h3>Visual Builder</h3>
-                    <p>Drag and drop UI components to design responsive interfaces. Connect data sources with simple point-and-click actions.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-database"></i>
-                    </div>
-                    <h3>Database Integration</h3>
-                    <p>Connect to any data source with built-in connectors. Automatically generate CRUD operations without writing SQL.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <h3>Cross-Platform</h3>
-                    <p>Build once, deploy everywhere. Generate applications for web, iOS, and Android from a single visual design.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-code"></i>
-                    </div>
-                    <h3>Extensible with Code</h3>
-                    <p>Add custom functionality with JavaScript when needed. Our platform doesn't limit your creativity or complexity.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3>Enterprise Security</h3>
-                    <p>Built-in authentication, authorization, and data encryption. SOC2 compliant with enterprise-grade security features.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-rocket"></i>
-                    </div>
-                    <h3>One-Click Deployment</h3>
-                    <p>Deploy to cloud or on-premises with a single click. Automatic scaling and monitoring included.</p>
-                </div>
+            <div id="node-list" class="flex flex-col gap-2 overflow-y-auto pr-1 flex-grow">
+                <!-- Nodes populated by JS -->
+            </div>
+
+            <div class="mt-auto pt-4 border-t border-gray-800 text-xs text-gray-500">
+                CLIENT IP: <span class="text-gray-300">192.168.x.x (Simulated)</span><br>
+                ISP: <span class="text-gray-300">CyberNet Global</span>
             </div>
         </div>
-    </section>
 
-    <!-- Benefits Section -->
-    <section class="benefits" id="benefits">
-        <div class="container">
-            <div class="section-title">
-                <h2>Why Choose CodeFlow?</h2>
-                <p>Join thousands of companies accelerating their digital transformation with low-code development.</p>
-            </div>
+        <!-- Center Column: The Dashboard & SVG Speedometer -->
+        <div class="w-full lg:w-1/2 flex flex-col items-center justify-center order-1 lg:order-2 relative">
             
-            <div class="benefits-grid">
-                <div class="benefit-item">
-                    <div class="benefit-icon">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <h3>10x Faster Development</h3>
-                    <p>Build applications in days instead of months with visual development tools.</p>
-                </div>
-                
-                <div class="benefit-item">
-                    <div class="benefit-icon">
-                        <i class="fas fa-money-bill-wave"></i>
-                    </div>
-                    <h3>Reduce Costs by 70%</h3>
-                    <p>Lower development and maintenance costs with fewer resources required.</p>
-                </div>
-                
-                <div class="benefit-item">
-                    <div class="benefit-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h3>Citizen Developers</h3>
-                    <p>Enable business users to build solutions with minimal IT assistance.</p>
-                </div>
-                
-                <div class="benefit-item">
-                    <div class="benefit-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h3>Scale Effortlessly</h3>
-                    <p>From prototype to enterprise-scale applications with the same platform.</p>
-                </div>
+            <!-- Dynamic Speed Display overlaid on meter -->
+            <div class="absolute top-[45%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-10 w-full">
+                <div id="current-speed" class="text-6xl md:text-8xl font-orbitron font-bold text-white tracking-tighter tabular-nums drop-shadow-lg">0.00</div>
+                <div id="current-unit" class="text-lg md:text-xl text-gray-400 font-bold tracking-widest mt-1 uppercase transition-colors duration-300">Mbps</div>
+                <div id="active-mode-label" class="mt-6 text-sm font-orbitron tracking-[0.3em] text-gray-600 opacity-0 transition-opacity duration-300">DOWNLOAD</div>
             </div>
-        </div>
-    </section>
 
-    <!-- Testimonials -->
-    <section class="testimonials" id="testimonials">
-        <div class="container">
-            <div class="section-title">
-                <h2>Trusted by Industry Leaders</h2>
-                <p>See what our customers have to say about their experience with CodeFlow.</p>
+            <!-- SVG Container -->
+            <div class="w-full max-w-[500px] aspect-[2/1.1] relative">
+                <svg id="speedometer" viewBox="0 0 500 280" class="w-full h-full drop-shadow-2xl overflow-visible">
+                    <defs>
+                        <!-- Glow Filters mapped later by CSS but good practice to have options here -->
+                        <linearGradient id="dl-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#0055ff"/>
+                            <stop offset="100%" stop-color="#00f3ff"/>
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Background Arc -->
+                    <path class="meter-track" d="M 50 250 A 200 200 0 0 1 450 250" />
+                    
+                    <!-- Progress Arc (Controlled via JS stroke-dashoffset) -->
+                    <!-- Dasharray is approx pi * radius = 3.14159 * 200 = 628.32 -->
+                    <!-- To hide it, dashoffset = 628.32. To fill, dashoffset = 0 -->
+                    <path id="meter-progress" class="meter-fill-dl" d="M 50 250 A 200 200 0 0 1 450 250" stroke-dasharray="628.32" stroke-dashoffset="628.32" />
+
+                    <!-- Dynamic Ticks Group -->
+                    <g id="ticks-group">
+                        <!-- Populated by JS -->
+                    </g>
+
+                    <!-- Needle Assembly -->
+                    <g id="needle-group">
+                        <!-- The needle line/polygon -->
+                        <polygon class="needle" points="247,250 253,250 251,60 249,60" />
+                        <line x1="250" y1="250" x2="250" y2="40" stroke="#fff" stroke-width="2" filter="drop-shadow(0 0 4px #fff)"/>
+                        
+                        <!-- Glow highlight on needle tip -->
+                        <circle cx="250" cy="40" r="3" fill="#fff" filter="drop-shadow(0 0 5px #00f3ff)"/>
+                    </g>
+                    
+                    <!-- Center Cap covering needle base -->
+                    <circle cx="250" cy="250" r="18" class="needle-center" id="needle-cap"/>
+                    <circle cx="250" cy="250" r="6" fill="#12141d" />
+                </svg>
             </div>
+
+            <!-- Start Action Area -->
+            <div class="mt-[-20px] z-20">
+                <button id="btn-start" class="relative group cursor-pointer border-none bg-transparent outline-none">
+                    <div class="absolute inset-0 bg-neon-cyan rounded-full blur-md opacity-40 group-hover:opacity-70 group-active:opacity-100 transition-opacity duration-300"></div>
+                    <div class="relative w-24 h-24 md:w-28 md:h-28 rounded-full border-2 border-neon-cyan bg-neon-dark flex items-center justify-center glass-panel overflow-hidden transition-transform duration-100 group-active:scale-95">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-transparent to-neon-cyan opacity-10 group-hover:opacity-30 transition-opacity duration-300"></div>
+                        <span id="btn-text" class="font-orbitron text-2xl md:text-3xl font-bold text-white group-hover:text-glow-cyan transition-all duration-300">GO</span>
+                    </div>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Results Metrics -->
+        <div class="w-full lg:w-1/4 flex flex-col gap-4 order-3">
             
-            <div class="testimonial-slider">
-                <div class="testimonial">
-                    <div class="testimonial-text">
-                        "CodeFlow transformed how we deliver solutions to our business units. What used to take 6 months now takes 3 weeks. Our development team can focus on complex problems while business teams build their own solutions."
+            <!-- Ping & Jitter Row -->
+            <div class="flex gap-4 w-full">
+                <div class="glass-panel p-4 rounded-2xl flex-1 flex flex-col items-center justify-center relative overflow-hidden">
+                    <div id="bg-glow-ping" class="absolute inset-0 bg-white opacity-0 transition-opacity duration-500 rounded-2xl"></div>
+                    <span class="text-gray-500 text-xs font-bold tracking-widest mb-1 z-10 flex items-center gap-1">
+                        PING
+                    </span>
+                    <div class="flex items-baseline gap-1 z-10">
+                        <span id="res-ping" class="text-2xl font-orbitron font-bold text-white">-</span>
+                        <span class="text-xs text-gray-500">ms</span>
                     </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">SC</div>
-                        <div class="author-info">
-                            <h4>Sarah Chen</h4>
-                            <p>CTO, TechGrowth Inc.</p>
-                        </div>
+                </div>
+                
+                <div class="glass-panel p-4 rounded-2xl flex-1 flex flex-col items-center justify-center relative overflow-hidden">
+                     <div id="bg-glow-jitter" class="absolute inset-0 bg-white opacity-0 transition-opacity duration-500 rounded-2xl"></div>
+                    <span class="text-gray-500 text-xs font-bold tracking-widest mb-1 z-10">JITTER</span>
+                    <div class="flex items-baseline gap-1 z-10">
+                        <span id="res-jitter" class="text-2xl font-orbitron font-bold text-white">-</span>
+                        <span class="text-xs text-gray-500">ms</span>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Pricing Section -->
-    <section class="pricing" id="pricing">
-        <div class="container">
-            <div class="section-title">
-                <h2>Simple, Transparent Pricing</h2>
-                <p>Choose the plan that fits your needs. All plans include core features with no hidden fees.</p>
-            </div>
-            
-            <div class="pricing-grid">
-                <div class="pricing-card">
-                    <h3 class="plan-name">Starter</h3>
-                    <div class="plan-price">$29<span>/month</span></div>
-                    <ul class="plan-features">
-                        <li>Up to 5 users</li>
-                        <li>10 GB storage</li>
-                        <li>Basic components</li>
-                        <li>Community support</li>
-                        <li>1 production app</li>
-                    </ul>
-                    <button class="secondary-button">Get Started</button>
-                </div>
-                
-                <div class="pricing-card featured">
-                    <div class="featured-badge">Most Popular</div>
-                    <h3 class="plan-name">Professional</h3>
-                    <div class="plan-price">$89<span>/month</span></div>
-                    <ul class="plan-features">
-                        <li>Up to 25 users</li>
-                        <li>100 GB storage</li>
-                        <li>All components</li>
-                        <li>Priority support</li>
-                        <li>10 production apps</li>
-                        <li>Custom branding</li>
-                    </ul>
-                    <button class="cta-button">Try Free for 14 Days</button>
-                </div>
-                
-                <div class="pricing-card">
-                    <h3 class="plan-name">Enterprise</h3>
-                    <div class="plan-price">Custom</div>
-                    <ul class="plan-features">
-                        <li>Unlimited users</li>
-                        <li>Unlimited storage</li>
-                        <li>All features included</li>
-                        <li>24/7 dedicated support</li>
-                        <li>Unlimited apps</li>
-                        <li>On-premises option</li>
-                    </ul>
-                    <button class="secondary-button">Contact Sales</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="container">
-            <h2>Start Building Today</h2>
-            <p>Join over 10,000 companies that use CodeFlow to accelerate their application development. No credit card required for the free trial.</p>
-            <button class="cta-button">Get Started for Free</button>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <div class="logo">
-                        <div class="logo-icon"><i class="fas fa-bezier-curve"></i></div>
-                        <div class="logo-text">Code<span>Flow</span></div>
+            <!-- Download Panel -->
+            <div class="glass-panel p-5 rounded-2xl flex flex-col relative overflow-hidden border-l-4 border-l-gray-800 transition-colors duration-300" id="panel-dl">
+                <div class="absolute right-0 top-0 w-32 h-32 bg-neon-cyan opacity-5 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
+                <div class="flex justify-between items-center mb-2 z-10">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-gray-600 transition-colors duration-300" id="icon-dl" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span class="text-gray-400 text-sm font-bold tracking-widest">DOWNLOAD</span>
                     </div>
-                    <p style="margin-top: 20px; color: #aaa;">The leading visual development platform for building enterprise applications with minimal coding.</p>
+                    <div id="progress-dl" class="w-16 h-1 bg-gray-800 rounded-full overflow-hidden hidden">
+                        <div class="h-full bg-neon-cyan w-0 transition-all duration-300"></div>
+                    </div>
                 </div>
-                
-                <div class="footer-column">
-                    <h3>Product</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Features</a></li>
-                        <li><a href="#">Pricing</a></li>
-                        <li><a href="#">Use Cases</a></li>
-                        <li><a href="#">Integrations</a></li>
-                        <li><a href="#">Roadmap</a></li>
-                    </ul>
+                <div class="flex items-baseline gap-1 z-10">
+                    <span id="res-dl" class="text-4xl font-orbitron font-bold text-gray-700 transition-colors duration-300">-</span>
                 </div>
-                
-                <div class="footer-column">
-                    <h3>Resources</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Documentation</a></li>
-                        <li><a href="#">Tutorials</a></li>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Community</a></li>
-                        <li><a href="#">Support</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-column">
-                    <h3>Company</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Careers</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                    </ul>
-                </div>
+                <!-- Sparkline container (decorative) -->
+                <div class="w-full h-8 mt-2 flex items-end gap-[2px] opacity-30" id="spark-dl"></div>
             </div>
-            
-            <div class="copyright">
-                <p>&copy; 2023 CodeFlow. All rights reserved.</p>
+
+            <!-- Upload Panel -->
+            <div class="glass-panel p-5 rounded-2xl flex flex-col relative overflow-hidden border-l-4 border-l-gray-800 transition-colors duration-300" id="panel-ul">
+                 <div class="absolute right-0 top-0 w-32 h-32 bg-neon-purple opacity-5 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
+                <div class="flex justify-between items-center mb-2 z-10">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-gray-600 transition-colors duration-300" id="icon-ul" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        <span class="text-gray-400 text-sm font-bold tracking-widest">UPLOAD</span>
+                    </div>
+                    <div id="progress-ul" class="w-16 h-1 bg-gray-800 rounded-full overflow-hidden hidden">
+                        <div class="h-full bg-neon-purple w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-1 z-10">
+                    <span id="res-ul" class="text-4xl font-orbitron font-bold text-gray-700 transition-colors duration-300">-</span>
+                </div>
+                <!-- Sparkline container (decorative) -->
+                <div class="w-full h-8 mt-2 flex items-end gap-[2px] opacity-30" id="spark-ul"></div>
             </div>
+
         </div>
-    </footer>
+    </main>
 
     <script>
-        // Mobile menu toggle
-        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
-            const navLinks = document.querySelector('.nav-links');
-            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-            
-            // Adjust for mobile
-            if (window.innerWidth <= 768) {
-                if (navLinks.style.display === 'flex') {
-                    navLinks.style.flexDirection = 'column';
-                    navLinks.style.position = 'absolute';
-                    navLinks.style.top = '80px';
-                    navLinks.style.left = '0';
-                    navLinks.style.width = '100%';
-                    navLinks.style.backgroundColor = 'white';
-                    navLinks.style.padding = '20px';
-                    navLinks.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
-                    
-                    const navItems = document.querySelectorAll('.nav-links li');
-                    navItems.forEach(item => {
-                        item.style.margin = '10px 0';
-                    });
-                }
+        /**
+         * Neon SpeedTest Simulation Engine
+         * Implements a realistic, physics-based UI simulation of network testing.
+         */
+
+        // Configuration & Constants
+        const CONFIG = {
+            arcRadius: 200,
+            arcLength: 3.14159 * 200, // ~628.32
+            maxSpeedDisplay: 1000,
+            // Speed scale milestones for non-linear mapping [speed, angle from -90]
+            // Scale points: 0, 1, 10, 50, 100, 500, 1000 Mbps mapped across 180 degrees
+            scale: [
+                { s: 0, a: -90 },
+                { s: 1, a: -60 },
+                { s: 10, a: -30 },
+                { s: 50, a: 0 },
+                { s: 100, a: 30 },
+                { s: 500, a: 60 },
+                { s: 1000, a: 90 }
+            ],
+            colors: {
+                idle: 'rgba(255,255,255,0.05)',
+                cyan: '#00f3ff',
+                purple: '#b500ff'
             }
-        });
-        
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                if(targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if(targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                    
-                    // Close mobile menu if open
-                    if(window.innerWidth <= 768) {
-                        document.querySelector('.nav-links').style.display = 'none';
-                    }
-                }
-            });
-        });
-        
-        // Simple testimonial slider
-        const testimonials = [
-            {
-                text: "CodeFlow transformed how we deliver solutions to our business units. What used to take 6 months now takes 3 weeks. Our development team can focus on complex problems while business teams build their own solutions.",
-                name: "Sarah Chen",
-                position: "CTO, TechGrowth Inc.",
-                initials: "SC"
-            },
-            {
-                text: "We reduced our app development time by 80% using CodeFlow. The visual interface made it easy for our analysts to build data dashboards without waiting for IT resources.",
-                name: "Marcus Johnson",
-                position: "Director of Operations, DataCorp",
-                initials: "MJ"
-            },
-            {
-                text: "As a non-technical founder, CodeFlow allowed me to build our MVP in just 2 months. I could test ideas quickly and iterate based on user feedback without deep coding knowledge.",
-                name: "Lisa Wang",
-                position: "Founder, StartupLabs",
-                initials: "LW"
-            }
+        };
+
+        // Simulated Network Nodes
+        const NODES = [
+            { id: 'n1', name: 'Beijing, CN', provider: 'China Telecom', lat: 39.9, basePing: 35 },
+            { id: 'n2', name: 'Shanghai, CN', provider: 'China Unicom', lat: 31.2, basePing: 12 },
+            { id: 'n3', name: 'Guangzhou, CN', provider: 'China Mobile', lat: 23.1, basePing: 28 },
+            { id: 'n4', name: 'Hong Kong, SAR', provider: 'HKBN', lat: 22.3, basePing: 45 },
+            { id: 'n5', name: 'Tokyo, JP', provider: 'NTT', lat: 35.6, basePing: 65 },
+            { id: 'n6', name: 'Los Angeles, US', provider: 'Cogent', lat: 34.0, basePing: 140 }
         ];
+
+        // State Machine
+        let STATE = {
+            status: 'IDLE', // IDLE, ROUTING, PING, DOWNLOAD, UPLOAD, DONE
+            selectedNode: null,
+            currentSpeed: 0,
+            targetSpeed: 0,
+            needleAngle: -90,
+            needleVelocity: 0,
+            results: { ping: 0, jitter: 0, dl: 0, ul: 0 },
+            animationFrame: null,
+            phaseProgress: 0, // 0 to 1
+            sparklineData: { dl: [], ul: [] }
+        };
+
+        // DOM Elements setup
+        const DOM = {
+            btnStart: document.getElementById('btn-start'),
+            btnText: document.getElementById('btn-text'),
+            nodeList: document.getElementById('node-list'),
+            phaseLabel: document.getElementById('test-phase-label'),
+            speedText: document.getElementById('current-speed'),
+            unitText: document.getElementById('current-unit'),
+            modeLabel: document.getElementById('active-mode-label'),
+            meterProgress: document.getElementById('meter-progress'),
+            needleGroup: document.getElementById('needle-group'),
+            needleCap: document.getElementById('needle-cap'),
+            resPing: document.getElementById('res-ping'),
+            resJitter: document.getElementById('res-jitter'),
+            resDl: document.getElementById('res-dl'),
+            resUl: document.getElementById('res-ul'),
+            panelDl: document.getElementById('panel-dl'),
+            panelUl: document.getElementById('panel-ul'),
+            iconDl: document.getElementById('icon-dl'),
+            iconUl: document.getElementById('icon-ul'),
+            progDl: document.getElementById('progress-dl').firstElementChild,
+            progUl: document.getElementById('progress-ul').firstElementChild,
+            sparkDl: document.getElementById('spark-dl'),
+            sparkUl: document.getElementById('spark-ul'),
+        };
+
+        // Utilities
+        const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
+        const lerp = (start, end, factor) => start + (end - start) * factor;
+        const randRange = (min, max) => Math.random() * (max - min) + min;
         
-        let currentTestimonial = 0;
-        const testimonialElement = document.querySelector('.testimonial');
-        
-        function rotateTestimonial() {
-            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
-            updateTestimonial();
+        // Non-linear mapping function: Speed -> Angle
+        function speedToAngle(speed) {
+            if (speed <= 0) return CONFIG.scale[0].a;
+            if (speed >= CONFIG.maxSpeedDisplay) return CONFIG.scale[CONFIG.scale.length - 1].a;
+
+            for (let i = 0; i < CONFIG.scale.length - 1; i++) {
+                const s1 = CONFIG.scale[i], s2 = CONFIG.scale[i + 1];
+                if (speed >= s1.s && speed <= s2.s) {
+                    // Linear interpolate within the segment
+                    const percentage = (speed - s1.s) / (s2.s - s1.s);
+                    return s1.a + (s2.a - s1.a) * percentage;
+                }
+            }
+            return 90;
         }
-        
-        function updateTestimonial() {
-            const testimonial = testimonials[currentTestimonial];
-            testimonialElement.innerHTML = `
-                <div class="testimonial-text">"${testimonial.text}"</div>
-                <div class="testimonial-author">
-                    <div class="author-avatar">${testimonial.initials}</div>
-                    <div class="author-info">
-                        <h4>${testimonial.name}</h4>
-                        <p>${testimonial.position}</p>
+
+        // Generate SVG Ticks based on the scale
+        function generateMeterTicks() {
+            const ticksGroup = document.getElementById('ticks-group');
+            let svgContent = '';
+            
+            // Major ticks based on scale array
+            CONFIG.scale.forEach(point => {
+                // Convert angle (-90 to 90) to SVG polar coordinates (180 to 360)
+                // -90deg rotation in CSS corresponds to 180deg in standard SVG circle geometry starting from right
+                // Math: angle from horizontal left
+                const angleRad = (point.a + 90) * (Math.PI / 180); // 0 to PI
+                // Map to SVG arc drawn from left (180 deg) to right (0 deg)
+                // Center is 250, 250. Radius is 200.
+                const cx = 250, cy = 250, rOuter = 200, rInner = 185;
+                
+                // Angle 0 here is left side.
+                const mathAngle = Math.PI - angleRad; 
+                
+                const x1 = cx + rOuter * Math.cos(mathAngle);
+                const y1 = cy - rOuter * Math.sin(mathAngle);
+                const x2 = cx + rInner * Math.cos(mathAngle);
+                const y2 = cy - rInner * Math.sin(mathAngle);
+                
+                svgContent += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="meter-tick-major" />`;
+                
+                // Label positioning (push outwards)
+                const rLabel = 225;
+                const lx = cx + rLabel * Math.cos(mathAngle);
+                const ly = cy - rLabel * Math.sin(mathAngle);
+                
+                // Only show select labels
+                if([0, 10, 100, 500, 1000].includes(point.s)) {
+                     svgContent += `<text x="${lx}" y="${ly}" class="meter-label">${point.s}</text>`;
+                }
+            });
+
+            // Minor ticks (fill in gaps linearly within angles)
+            for (let angle = -90; angle <= 90; angle += 3) {
+                // Skip if close to major tick
+                if (CONFIG.scale.some(p => Math.abs(p.a - angle) < 1.5)) continue;
+                
+                const angleRad = (angle + 90) * (Math.PI / 180);
+                const mathAngle = Math.PI - angleRad;
+                const cx = 250, cy = 250, rOuter = 200, rInner = 193;
+                
+                const x1 = cx + rOuter * Math.cos(mathAngle);
+                const y1 = cy - rOuter * Math.sin(mathAngle);
+                const x2 = cx + rInner * Math.cos(mathAngle);
+                const y2 = cy - rInner * Math.sin(mathAngle);
+                
+                svgContent += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="meter-tick" />`;
+            }
+
+            ticksGroup.innerHTML = svgContent;
+        }
+
+        // Build Node List UI
+        function renderNodes() {
+            DOM.nodeList.innerHTML = NODES.map(node => `
+                <div id="node-${node.id}" class="node-item border border-gray-800 rounded-lg p-3 flex justify-between items-center bg-gray-900/50 cursor-default">
+                    <div class="flex flex-col">
+                        <span class="text-sm font-bold text-gray-200">${node.name}</span>
+                        <span class="text-xs text-gray-500">${node.provider}</span>
                     </div>
+                    <div class="ping-indicator text-xs font-orbitron text-gray-600">-- ms</div>
                 </div>
-            `;
+            `).join('');
         }
-        
-        // Auto-rotate testimonials every 5 seconds
-        setInterval(rotateTestimonial, 5000);
-        
-        // CTA button interactions
-        document.querySelectorAll('.cta-button').forEach(button => {
-            button.addEventListener('click', function() {
-                alert('Thank you for your interest in CodeFlow! You would be redirected to the signup page in a real implementation.');
+
+        // Core Render Loop (Physics & UI Updates)
+        function renderLoop(time) {
+            if (STATE.status !== 'IDLE') {
+                // Needle Physics Engine
+                // Simulating inertia, spring force, and jitter
+                const targetA = speedToAngle(STATE.currentSpeed);
+                
+                // Spring behavior: acceleration towards target
+                let force = (targetA - STATE.needleAngle) * 0.15; // Stiffness
+                
+                // Damping
+                STATE.needleVelocity *= 0.7; // Friction
+                STATE.needleVelocity += force;
+                
+                // Add mechanical jitter if active
+                if (STATE.status === 'DOWNLOAD' || STATE.status === 'UPLOAD' || STATE.status === 'PING') {
+                    // Small high frequency noise
+                    STATE.needleAngle += randRange(-0.5, 0.5); 
+                }
+
+                STATE.needleAngle += STATE.needleVelocity;
+                
+                // Hard limits
+                STATE.needleAngle = clamp(STATE.needleAngle, -95, 95);
+
+                // Update SVG Transforms
+                DOM.needleGroup.style.transform = `rotate(${STATE.needleAngle}deg)`;
+                
+                // Update Progress Arc
+                // Map angle back to 0-1 range for dashoffset
+                // angle goes -90 to +90. Map to 0 to 180. Ratio = (angle+90)/180.
+                let fillRatio = (STATE.needleAngle + 90) / 180;
+                fillRatio = clamp(fillRatio, 0, 1);
+                
+                // offset = totalLength - (totalLength * ratio)
+                const offset = CONFIG.arcLength * (1 - fillRatio);
+                DOM.meterProgress.style.strokeDashoffset = offset;
+
+                // Update Big Number Display
+                if (STATE.status === 'DOWNLOAD' || STATE.status === 'UPLOAD') {
+                    // Smooth speed text update
+                    DOM.speedText.textContent = STATE.currentSpeed.toFixed(2);
+                } else if (STATE.status === 'DONE') {
+                    // Keep final visual
+                }
+            }
+
+            STATE.animationFrame = requestAnimationFrame(renderLoop);
+        }
+
+        // Helper to update sparklines
+        function pushSparkline(type, value) {
+            const arr = STATE.sparklineData[type];
+            arr.push(value);
+            if (arr.length > 30) arr.shift(); // Keep last 30 frames
+            
+            const container = type === 'dl' ? DOM.sparkDl : DOM.sparkUl;
+            const maxVal = Math.max(...arr, 1); // prevent /0
+            const color = type === 'dl' ? 'bg-neon-cyan' : 'bg-neon-purple';
+            
+            container.innerHTML = arr.map(v => {
+                const heightPct = (v / maxVal) * 100;
+                return `<div class="w-1 ${color} opacity-80 rounded-t-sm" style="height: ${heightPct}%"></div>`;
+            }).join('');
+        }
+
+        // --- TEST PHASES ---
+
+        async function phaseRouting() {
+            STATE.status = 'ROUTING';
+            DOM.phaseLabel.textContent = 'FINDING OPTIMAL NODE...';
+            DOM.phaseLabel.className = 'text-neon-cyan text-xs font-bold animate-pulse';
+            
+            let bestNode = null;
+            let lowestPing = 999;
+
+            // Sequential scanning effect
+            for (let i = 0; i < NODES.length; i++) {
+                const node = NODES[i];
+                const el = document.getElementById(`node-${node.id}`);
+                const pingEl = el.querySelector('.ping-indicator');
+                
+                // Highlight as testing
+                el.classList.add('testing');
+                
+                // Simulate network request delay
+                await new Promise(r => setTimeout(r, 200 + Math.random() * 300));
+                
+                // Simulate ping calculation based on basePing + noise
+                const simulatedPing = Math.floor(node.basePing * randRange(0.9, 1.3));
+                pingEl.textContent = `${simulatedPing} ms`;
+                pingEl.classList.replace('text-gray-600', 'text-neon-cyan');
+                
+                el.classList.remove('testing');
+
+                if (simulatedPing < lowestPing) {
+                    lowestPing = simulatedPing;
+                    bestNode = node;
+                }
+            }
+
+            // Highlight chosen node
+            STATE.selectedNode = bestNode;
+            STATE.results.ping = lowestPing; // preliminary
+            
+            const bestEl = document.getElementById(`node-${bestNode.id}`);
+            bestEl.classList.add('selected');
+            bestEl.querySelector('.ping-indicator').classList.replace('text-neon-cyan', 'text-neon-purple');
+            
+            await new Promise(r => setTimeout(r, 500));
+        }
+
+        async function phasePing() {
+            STATE.status = 'PING';
+            DOM.phaseLabel.textContent = 'MEASURING LATENCY';
+            DOM.phaseLabel.className = 'text-gray-300 text-xs font-bold';
+            
+            DOM.modeLabel.textContent = "LATENCY";
+            DOM.modeLabel.style.opacity = '1';
+            DOM.unitText.textContent = "ms";
+
+            const elBg = document.getElementById('bg-glow-ping');
+            elBg.classList.replace('opacity-0', 'opacity-10');
+            elBg.classList.add('bg-neon-cyan');
+
+            let pings = [];
+            // Simulate sending 10 ping packets
+            for(let i=0; i<10; i++) {
+                // Base ping + variance
+                let val = STATE.selectedNode.basePing + randRange(-5, 15);
+                if (val < 1) val = 1;
+                pings.push(val);
+                
+                // Visual feedback on big dial
+                STATE.currentSpeed = val; // Temporarily map ping to dial for cool effect
+                DOM.speedText.textContent = val.toFixed(0);
+                DOM.resPing.textContent = val.toFixed(0);
+                
+                await new Promise(r => setTimeout(r, 150));
+            }
+
+            // Calculate final
+            const avgPing = pings.reduce((a,b)=>a+b,0) / pings.length;
+            
+            // Calculate Jitter (average absolute deviation)
+            let jitterSum = 0;
+            for(let i=1; i<pings.length; i++) {
+                jitterSum += Math.abs(pings[i] - pings[i-1]);
+            }
+            const jitter = jitterSum / (pings.length - 1);
+
+            STATE.results.ping = avgPing;
+            STATE.results.jitter = jitter;
+            
+            DOM.resPing.textContent = Math.round(avgPing);
+            DOM.resPing.classList.replace('text-white', 'text-neon-cyan');
+            DOM.resPing.classList.add('text-glow-cyan');
+            
+            document.getElementById('bg-glow-jitter').classList.replace('opacity-0', 'opacity-10');
+            document.getElementById('bg-glow-jitter').classList.add('bg-neon-cyan');
+            
+            DOM.resJitter.textContent = Math.max(1, Math.round(jitter));
+            DOM.resJitter.classList.replace('text-white', 'text-neon-cyan');
+
+            STATE.currentSpeed = 0; // reset dial
+            await new Promise(r => setTimeout(r, 800));
+            
+            elBg.classList.remove('opacity-10');
+            document.getElementById('bg-glow-jitter').classList.remove('opacity-10');
+        }
+
+        async function phaseDownload() {
+            STATE.status = 'DOWNLOAD';
+            DOM.phaseLabel.textContent = 'DOWNLOADING DATA';
+            DOM.modeLabel.textContent = "DOWNLOAD";
+            DOM.unitText.textContent = "Mbps";
+            
+            // UI Styling setup
+            DOM.meterProgress.className = 'meter-fill-dl';
+            DOM.needleCap.style.stroke = CONFIG.colors.cyan;
+            DOM.panelDl.classList.replace('border-l-gray-800', 'border-l-neon-cyan');
+            DOM.panelDl.classList.replace('text-gray-700', 'text-white');
+            DOM.iconDl.classList.replace('text-gray-600', 'text-neon-cyan');
+            DOM.progDl.parentElement.classList.remove('hidden');
+            DOM.resDl.classList.replace('text-gray-700', 'text-white');
+
+            // Simulation parameters
+            // Simulate a user having a 500-800Mbps connection, affected by distance to node
+            const maxCap = 800 - (STATE.selectedNode.basePing * 2); 
+            const targetMax = Math.max(100, maxCap); // min 100Mbps
+            
+            let timeElapsed = 0;
+            const duration = 8000; // 8 seconds test
+            const interval = 50; // update frequency
+            
+            return new Promise(resolve => {
+                const timer = setInterval(() => {
+                    timeElapsed += interval;
+                    const progress = timeElapsed / duration;
+                    DOM.progDl.style.width = `${progress * 100}%`;
+
+                    if (progress >= 1) {
+                        clearInterval(timer);
+                        finalizePhase('dl');
+                        resolve();
+                        return;
+                    }
+
+                    // Speed Curve Generator
+                    if (progress < 0.2) {
+                        // Ramp up phase (0 to 20%)
+                        STATE.targetSpeed = lerp(0, targetMax * 0.9, progress / 0.2);
+                    } else if (progress > 0.8) {
+                        // Ramp down / stabilization phase (80 to 100%)
+                        // Hold near max
+                        STATE.targetSpeed = targetMax * randRange(0.95, 1.05);
+                    } else {
+                        // Sustain phase (20 to 80%) with sine wave oscillation and noise
+                        const wave = Math.sin(progress * Math.PI * 4) * (targetMax * 0.05);
+                        const noise = randRange(-targetMax*0.02, targetMax*0.02);
+                        STATE.targetSpeed = targetMax * 0.9 + wave + noise;
+                    }
+                    
+                    // Actually update the current speed pushing the needle
+                    STATE.currentSpeed = lerp(STATE.currentSpeed, STATE.targetSpeed, 0.2);
+                    
+                    // Update rolling max/avg logic for results
+                    if (progress > 0.3) {
+                         // average after initial ramp
+                         if(!STATE._dlSamples) STATE._dlSamples = [];
+                         STATE._dlSamples.push(STATE.currentSpeed);
+                         const avg = STATE._dlSamples.reduce((a,b)=>a+b,0) / STATE._dlSamples.length;
+                         DOM.resDl.textContent = avg.toFixed(2);
+                         STATE.results.dl = avg;
+                    }
+
+                    pushSparkline('dl', STATE.currentSpeed);
+
+                }, interval);
             });
-        });
-        
-        // Pricing card interactions
-        document.querySelectorAll('.pricing-card button').forEach(button => {
-            button.addEventListener('click', function() {
-                const planName = this.closest('.pricing-card').querySelector('.plan-name').textContent;
-                alert(`You selected the ${planName} plan. In a real implementation, you would be redirected to the checkout process.`);
+        }
+
+        async function phaseUpload() {
+            // Setup transition
+            STATE.currentSpeed = 0;
+            STATE.targetSpeed = 0;
+            await new Promise(r => setTimeout(r, 1000)); // Pause between DL and UL
+
+            STATE.status = 'UPLOAD';
+            DOM.phaseLabel.textContent = 'UPLOADING DATA';
+            DOM.modeLabel.textContent = "UPLOAD";
+            
+            // UI Styling setup for UL (Purple Theme)
+            DOM.meterProgress.className = 'meter-fill-ul';
+            DOM.needleCap.style.stroke = CONFIG.colors.purple;
+            DOM.panelDl.classList.replace('border-l-neon-cyan', 'border-l-gray-800'); // Dim DL
+            DOM.iconDl.classList.replace('text-neon-cyan', 'text-gray-600');
+            
+            DOM.panelUl.classList.replace('border-l-gray-800', 'border-l-neon-purple');
+            DOM.panelUl.classList.replace('text-gray-700', 'text-white');
+            DOM.iconUl.classList.replace('text-gray-600', 'text-neon-purple');
+            DOM.progUl.parentElement.classList.remove('hidden');
+            DOM.resUl.classList.replace('text-gray-700', 'text-white');
+
+            // Upload is typically asymmetrical, lower than DL
+            const targetMax = Math.max(50, STATE.results.dl * randRange(0.2, 0.4)); 
+            
+            let timeElapsed = 0;
+            const duration = 8000;
+            const interval = 50;
+            
+            return new Promise(resolve => {
+                const timer = setInterval(() => {
+                    timeElapsed += interval;
+                    const progress = timeElapsed / duration;
+                    DOM.progUl.style.width = `${progress * 100}%`;
+
+                    if (progress >= 1) {
+                        clearInterval(timer);
+                        finalizePhase('ul');
+                        resolve();
+                        return;
+                    }
+
+                    // Upload curve tends to be spikier
+                    if (progress < 0.3) {
+                        STATE.targetSpeed = lerp(0, targetMax, (progress / 0.3) ** 1.5); // Ease-in
+                    } else {
+                        const spike = Math.random() > 0.8 ? randRange(-targetMax*0.15, targetMax*0.1) : 0;
+                        STATE.targetSpeed = targetMax * randRange(0.9, 1.05) + spike;
+                    }
+                    
+                    STATE.currentSpeed = lerp(STATE.currentSpeed, STATE.targetSpeed, 0.25);
+                    
+                    if (progress > 0.3) {
+                         if(!STATE._ulSamples) STATE._ulSamples = [];
+                         STATE._ulSamples.push(STATE.currentSpeed);
+                         const avg = STATE._ulSamples.reduce((a,b)=>a+b,0) / STATE._ulSamples.length;
+                         DOM.resUl.textContent = avg.toFixed(2);
+                         STATE.results.ul = avg;
+                    }
+                    
+                    pushSparkline('ul', STATE.currentSpeed);
+
+                }, interval);
             });
-        });
+        }
+
+        function finalizePhase(type) {
+            if (type === 'dl') {
+                DOM.progDl.parentElement.classList.add('hidden');
+                DOM.resDl.classList.add('text-glow-cyan', 'text-neon-cyan');
+            } else if (type === 'ul') {
+                DOM.progUl.parentElement.classList.add('hidden');
+                DOM.resUl.classList.add('text-glow-purple', 'text-neon-purple');
+            }
+        }
+
+        async function runFullTestSequence() {
+            if (STATE.status !== 'IDLE' && STATE.status !== 'DONE') return;
+            
+            // Reset UI State
+            DOM.btnStart.classList.add('scale-0', 'opacity-0', 'pointer-events-none');
+            setTimeout(() => DOM.btnStart.style.display = 'none', 300);
+            
+            // Reset numerical results
+            ['resPing', 'resJitter', 'resDl', 'resUl'].forEach(id => {
+                DOM[id].textContent = '-';
+                DOM[id].className = 'text-2xl md:text-4xl font-orbitron font-bold text-gray-700 transition-colors duration-300';
+                if(id.includes('Ping')||id.includes('Jitter')) DOM[id].classList.replace('text-4xl','text-2xl');
+            });
+            DOM.resPing.classList.replace('text-gray-700', 'text-white');
+            DOM.resJitter.classList.replace('text-gray-700', 'text-white');
+            
+            // Reset visuals
+            DOM.panelDl.classList.replace('border-l-neon-cyan', 'border-l-gray-800');
+            DOM.panelUl.classList.replace('border-l-neon-purple', 'border-l-gray-800');
+            DOM.iconDl.className = 'w-5 h-5 text-gray-600 transition-colors duration-300';
+            DOM.iconUl.className = 'w-5 h-5 text-gray-600 transition-colors duration-300';
+            DOM.sparkDl.innerHTML = '';
+            DOM.sparkUl.innerHTML = '';
+            STATE._dlSamples = [];
+            STATE._ulSamples = [];
+            STATE.sparklineData = { dl: [], ul: [] };
+            
+            // Reset nodes
+            document.querySelectorAll('.node-item').forEach(el => {
+                el.className = 'node-item border border-gray-800 rounded-lg p-3 flex justify-between items-center bg-gray-900/50 cursor-default';
+                el.querySelector('.ping-indicator').textContent = '-- ms';
+                el.querySelector('.ping-indicator').className = 'ping-indicator text-xs font-orbitron text-gray-600';
+            });
+
+            DOM.meterProgress.className = 'meter-fill-dl';
+            DOM.meterProgress.style.strokeDashoffset = CONFIG.arcLength; // reset dial to empty
+            
+            // Execute sequence
+            await phaseRouting();
+            await phasePing();
+            await phaseDownload();
+            await phaseUpload();
+            
+            // Finish
+            STATE.status = 'DONE';
+            STATE.currentSpeed = 0; // Return needle to 0
+            DOM.modeLabel.style.opacity = '0';
+            DOM.unitText.textContent = "";
+            DOM.speedText.textContent = "DONE";
+            DOM.phaseLabel.textContent = 'SYSTEM STANDBY';
+            DOM.phaseLabel.className = 'text-gray-500 text-xs font-bold';
+            
+            // Restore button
+            setTimeout(() => {
+                DOM.btnText.textContent = "AGAIN";
+                DOM.btnStart.style.display = 'block';
+                // Trigger reflow to restart animation
+                void DOM.btnStart.offsetWidth; 
+                DOM.btnStart.classList.remove('scale-0', 'opacity-0', 'pointer-events-none');
+            }, 1000);
+        }
+
+        // Initialization
+        window.onload = function() {
+            generateMeterTicks();
+            renderNodes();
+            
+            // Start the physics loop
+            STATE.animationFrame = requestAnimationFrame(renderLoop);
+            
+            // Event Listeners
+            DOM.btnStart.addEventListener('click', runFullTestSequence);
+        };
+
     </script>
 </body>
 </html>
